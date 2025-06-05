@@ -1,0 +1,13 @@
+# Python ignore
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code ignore
+.vscode/
+
+# Env ignore
+.env
+
+# Google credentials
+credentials.json
