@@ -3,6 +3,9 @@
 from sheets.base import get_sheet
 from config import SHEET_URL_ATTENDANCE
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 def is_register_number_registered(register_number):
     # Attendance-д регистр бүртгэгдсэн эсэх
@@ -35,6 +38,7 @@ def add_register(telegram_user_id, username, register_number, last_name, first_n
         '',                   # S
     ]
     sheet.append_row(row)
+    logger.info("Registered user %s (%s)", telegram_user_id, register_number)
 
 def add_checkin(
     telegram_user_id, 
@@ -67,6 +71,7 @@ def add_checkin(
         office_name
     ]
     sheet.append_row(row)
+    logger.info("Checkin recorded for %s at %s", telegram_user_id, office_name)
 
 def add_checkout(
     telegram_user_id,
@@ -100,3 +105,4 @@ def add_checkout(
         office_name
     ]
     sheet.append_row(row)
+    logger.info("Checkout recorded for %s at %s", telegram_user_id, office_name)

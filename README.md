@@ -11,6 +11,7 @@ The bot expects the following variables to be available in the environment:
 - `SHEET_URL_ATTENDANCE` – URL of the Google Sheet where attendance records are stored.
 - `SHEET_URL_LOCATION` – URL of the Google Sheet that lists office locations.
 - `ADMIN_IDS` – Comma-separated list of Telegram user IDs with admin rights.
+- `LOG_LEVEL` – Optional logging level (e.g. `DEBUG`, `INFO`). Defaults to `INFO`.
 
 In addition, Google service account credentials must be provided either via `GOOGLE_CREDS_JSON` (JSON string) or by pointing `CREDS_FILE` to a credentials file. `WORKSHEET_NAME` can be set to choose a different worksheet name for location data (defaults to `offices`).
 

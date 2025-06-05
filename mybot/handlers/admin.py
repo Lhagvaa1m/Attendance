@@ -2,6 +2,7 @@
 
 import os
 from aiogram import Dispatcher, types
+import logging
 try:  # pragma: no cover - fallback for test stubs
     from aiogram.types import ReplyKeyboardRemove
 except Exception:  # pragma: no cover - fallback for tests without this class
@@ -11,6 +12,7 @@ except Exception:  # pragma: no cover - fallback for tests without this class
 
 # Parsed list of admin Telegram IDs will be loaded from the environment
 ADMIN_IDS: list[int] = []
+logger = logging.getLogger(__name__)
 
 
 def _get_admin_ids() -> set[int]:

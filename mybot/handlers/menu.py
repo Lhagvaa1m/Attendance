@@ -3,6 +3,9 @@ from aiogram.dispatcher.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.dispatcher import FSMContext
 from mybot import dp
+import logging
+
+logger = logging.getLogger(__name__)
 
 # --- Keyboard ---
 menu_keyboard = ReplyKeyboardMarkup(
@@ -18,6 +21,7 @@ menu_keyboard = ReplyKeyboardMarkup(
 @dp.message_handler(commands=['menu', 'start'], state='*')
 async def send_menu(message: types.Message, state: FSMContext):
     await state.finish()
+    logger.info("Displaying menu for user %s", message.from_user.id)
     await message.answer(
         "Доорх цэснээс сонгоно уу:",
         reply_markup=menu_keyboard

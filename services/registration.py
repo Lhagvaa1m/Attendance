@@ -3,6 +3,9 @@ from sheets.employees import find_employee_register_row, register_employee_teleg
 from sheets.attendance import is_register_number_registered
 from sheets.base import get_sheet
 from config import SHEET_URL_EMPLOYEES, SHEET_URL_ATTENDANCE
+import logging
+
+logger = logging.getLogger(__name__)
 
 def is_telegram_id_registered(telegram_user_id):
     # Telegram ID өмнө нь бүртгэгдсэн эсэхийг шалгах

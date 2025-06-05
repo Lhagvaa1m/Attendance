@@ -5,6 +5,9 @@ from utils.gsheet_cache import (
     get_sheet as cached_get_sheet,
     get_worksheet,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 def get_sheet(url):
     return cached_get_sheet(url)
@@ -25,5 +28,5 @@ def get_offices_from_sheet(sheet_url, creds_file='credentials.json', worksheet_n
                 'lon': float(row['lon'])
             })
         except Exception as e:
-            print(f"Алдаатай мөр алгасав: {row} ({e})")
+            logger.warning("Алдаатай мөр алгасав: %s (%s)", row, e)
     return offices
