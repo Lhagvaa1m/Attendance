@@ -15,7 +15,7 @@ def is_telegram_id_registered(telegram_user_id):
     att_users = sheet_att.col_values(1)[1:]
     return str(telegram_user_id) in att_users
 
-# Цагийн бүртгэлийн Sheet-рүү Регистерийн дугаар татах
+# Employees sheet-ээс Telegram ID-гаар регистрийн дугаар авах
 def get_register_number_by_telegram_id(telegram_id):
     sheet = get_sheet(SHEET_URL_EMPLOYEES)
     rows = sheet.get_all_values()
