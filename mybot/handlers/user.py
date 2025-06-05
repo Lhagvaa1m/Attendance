@@ -1,8 +1,5 @@
 # ==== mybot/handlers/user.py ====
 # Хэрэглэгчийн command, FSM registration, checkin/checkout болон зураг хадгалах
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
