@@ -2,6 +2,9 @@
 # Employees sheet-тэй холбоотой бүх функцүүд (хайлт, бүртгэл)
 from sheets.base import get_sheet
 from config import SHEET_URL_EMPLOYEES
+import logging
+
+logger = logging.getLogger(__name__)
 
 def find_employee_register_row(register_number):
     # Регистрийн дугаараар ажилтны мэдээллийг хайх
@@ -9,6 +12,7 @@ def find_employee_register_row(register_number):
     records = sheet.get_all_records()
     for idx, row in enumerate(records):
         if str(row['register_number']) == str(register_number):
+            logger.debug("Found employee row for %s", register_number)
             return idx + 2, row
     return None, None
 
@@ -24,5 +28,8 @@ def register_employee_telegram_id(register_number, telegram_user_id):
     row_number, row = find_employee_register_row(register_number)
     if row_number:
         sheet.update_cell(row_number, 4, str(telegram_user_id))
+        logger.info(
+            "Linked telegram id %s to register %s", telegram_user_id, register_number
+        )
         return True
     return False

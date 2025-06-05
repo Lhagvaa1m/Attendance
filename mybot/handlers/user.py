@@ -8,6 +8,9 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from mybot import dp
+import logging
+
+logger = logging.getLogger(__name__)
 from services.registration import is_telegram_id_registered, get_register_number_by_telegram_id
 from sheets.employees import find_employee_register_row, register_employee_telegram_id
 from sheets.attendance import add_register, add_checkin, add_checkout
@@ -29,6 +32,7 @@ class CheckoutStates(StatesGroup):
 @dp.message_handler(commands=['register'])
 async def register_handler(message: types.Message):
     user = message.from_user
+    logger.info("/register by %s", user.id)
     if is_telegram_id_registered(user.id):
         await message.reply("Та өмнө нь бүртгүүлсэн байна.")
         return
@@ -44,6 +48,7 @@ async def register_handler(message: types.Message):
 @dp.message_handler(state=RegisterStates.waiting_for_register_number)
 async def get_register_number(message: types.Message, state: FSMContext):
     register_number = message.text.strip()
+    logger.debug("Received register number %s from %s", register_number, message.from_user.id)
     row_number, row = find_employee_register_row(register_number)
     if not row_number:
         await message.reply("Бүртгэл олдсонгүй.")
@@ -71,6 +76,7 @@ async def process_register_confirm_callback(query: types.CallbackQuery, state: F
         _, row = find_employee_register_row(register_number)
         add_register(telegram_user_id, username, register_number, row['last_name'], row['first_name'])
         register_employee_telegram_id(register_number, telegram_user_id)
+        logger.info("User %s registered with %s", telegram_user_id, register_number)
         await query.message.edit_text("Бүртгэл амжилттай.")
         await state.finish()
     elif query.data == "back_register":
@@ -82,6 +88,7 @@ async def process_register_confirm_callback(query: types.CallbackQuery, state: F
 @dp.message_handler(commands=['checkin'])
 async def checkin_handler(message: types.Message):
     user = message.from_user
+    logger.info("/checkin by %s", user.id)
     if not is_telegram_id_registered(user.id):
         await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
         return
@@ -97,6 +104,7 @@ async def checkin_handler(message: types.Message):
 @dp.message_handler(content_types=['location'], state=None)
 async def location_handler(message: types.Message):
     user = message.from_user
+    logger.debug("Received location from %s", user.id)
     if not is_telegram_id_registered(user.id):
         await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
         return
@@ -120,6 +128,8 @@ async def location_handler(message: types.Message):
         await message.reply("Та зөвшөөрөгдсөн радиус дотор байхгүй байна.")
         return
 
+    logger.info("Checkin success for %s at %s", user.id, office_name)
+
     add_checkin(
         user.id, 
         user.username or "", 
@@ -136,6 +146,7 @@ async def location_handler(message: types.Message):
 @dp.message_handler(commands=['checkout'])
 async def checkout_handler(message: types.Message):
     user = message.from_user
+    logger.info("/checkout by %s", user.id)
     if not is_telegram_id_registered(user.id):
         await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
         return
@@ -152,6 +163,7 @@ async def checkout_handler(message: types.Message):
 @dp.message_handler(content_types=['location'], state=CheckoutStates.waiting_for_location)
 async def process_checkout_location(message: types.Message, state: FSMContext):
     user = message.from_user
+    logger.debug("Checkout location from %s", user.id)
     if not is_telegram_id_registered(user.id):
         await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
         return
@@ -173,6 +185,7 @@ async def process_checkout_location(message: types.Message, state: FSMContext):
 
     await state.update_data(latitude=loc.latitude, longitude=loc.longitude)
     await state.update_data(office_name=office_name)
+    logger.info("Checkout location accepted for %s at %s", user.id, office_name)
     await message.reply("Одоо ажлын зургийг илгээнэ үү:", reply_markup=ReplyKeyboardRemove())
     await CheckoutStates.waiting_for_photo.set()
 
@@ -195,6 +208,7 @@ async def photo_required_warning(message: types.Message, state: FSMContext):
 @dp.message_handler(state=CheckoutStates.waiting_for_description)
 async def process_checkout_description(message: types.Message, state: FSMContext):
     user = message.from_user   # Энэ мөрийг хамгийн эхэнд нэмэх ёстой!
+    logger.debug("Processing checkout description from %s", user.id)
     description = message.text
     data = await state.get_data()
     latitude = data.get("latitude")
@@ -216,6 +230,7 @@ async def process_checkout_description(message: types.Message, state: FSMContext
         photo_ids_str,
         office_name
     )
+    logger.info("Checkout recorded for %s at %s", user.id, office_name)
     await message.reply("Checkout бүртгэгдлээ!", reply_markup=ReplyKeyboardRemove())
     await state.finish()
 
