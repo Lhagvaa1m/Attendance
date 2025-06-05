@@ -97,7 +97,7 @@ async def checkin_handler(message: types.Message):
     )
 
   # Байршил хүлээж авах үед checkin хийх
-@dp.message_handler(content_types=['location'])
+@dp.message_handler(content_types=['location'], state=None)
 async def location_handler(message: types.Message):
     user = message.from_user
     if not is_telegram_id_registered(user.id):
