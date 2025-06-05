@@ -23,3 +23,19 @@ def get_register_number_by_telegram_id(telegram_id):
         if str(row[3]) == str(telegram_id):  # 4-р багана telegram_user_id гэж үзье
             return row[0]  # 1-р багана нь register number гэж үзэж байна
     return ""
+
+
+def list_registered_telegram_ids():
+    """Return a list of Telegram user IDs registered in the employees sheet."""
+    sheet = get_sheet(SHEET_URL_EMPLOYEES)
+    records = sheet.get_all_records()
+    telegram_ids = []
+    for row in records:
+        value = row.get("telegram_user_id")
+        if not value:
+            continue
+        try:
+            telegram_ids.append(int(value))
+        except ValueError:
+            continue
+    return telegram_ids
