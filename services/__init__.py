@@ -1,9 +1,10 @@
-# ==== bot/__init__.py ====
-# Ботын үндсэн Dispatcher, Bot, Storage-уудыг тохируулах
-from aiogram import Bot, Dispatcher
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from config import API_TOKEN
+"""Service layer package initialization.
 
-bot = Bot(token=API_TOKEN)
-storage = MemoryStorage()
-dp = Dispatcher(bot, storage=storage)
+Only re-exports the ``bot`` and ``dp`` objects from :mod:`mybot`.  The
+instances themselves are created in ``mybot.__init__`` to avoid
+duplication.
+"""
+
+from mybot import bot, dp
+
+__all__ = ["bot", "dp"]
