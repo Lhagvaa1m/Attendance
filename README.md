@@ -10,6 +10,7 @@ The bot expects the following variables to be available in the environment:
 - `SHEET_URL_EMPLOYEES` – URL of the Google Sheet that contains employee details.
 - `SHEET_URL_ATTENDANCE` – URL of the Google Sheet where attendance records are stored.
 - `SHEET_URL_LOCATION` – URL of the Google Sheet that lists office locations.
+- `ADMIN_IDS` – Comma-separated list of Telegram user IDs with admin rights.
 
 In addition, Google service account credentials must be provided either via `GOOGLE_CREDS_JSON` (JSON string) or by pointing `CREDS_FILE` to a credentials file. `WORKSHEET_NAME` can be set to choose a different worksheet name for location data (defaults to `offices`).
 
@@ -31,3 +32,10 @@ python main.py
 ```
 
 The bot will connect to Telegram and begin handling commands such as `/register`, `/checkin` and `/checkout`.
+
+## Admin commands
+
+Users whose Telegram IDs are listed in the `ADMIN_IDS` environment variable can use the following commands:
+
+- `/usercount` – show the number of registered users.
+- `/broadcast <text>` – send `<text>` to all registered users.
