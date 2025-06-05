@@ -84,6 +84,10 @@ async def process_register_confirm_callback(query: types.CallbackQuery, state: F
 # /checkin команд, байршил авах
 @dp.message_handler(commands=['checkin'])
 async def checkin_handler(message: types.Message):
+    user = message.from_user
+    if not is_telegram_id_registered(user.id):
+        await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
+        return
     await message.reply(
         "🚩 Байршлаа илгээнэ үү!\n\n"
         "❗️ Зөвхөн \"Live Location\" (хөдөлгөөнт байршил) илгээнэ.\n\n"
@@ -95,6 +99,10 @@ async def checkin_handler(message: types.Message):
   # Байршил хүлээж авах үед checkin хийх
 @dp.message_handler(content_types=['location'])
 async def location_handler(message: types.Message):
+    user = message.from_user
+    if not is_telegram_id_registered(user.id):
+        await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
+        return
     loc = message.location
     # Заавал live_location шалгана
     if not loc.live_period:
@@ -130,6 +138,10 @@ async def location_handler(message: types.Message):
 # 1. /checkout команд – эхлээд зураг илгээхийг асууна
 @dp.message_handler(commands=['checkout'])
 async def checkout_handler(message: types.Message):
+    user = message.from_user
+    if not is_telegram_id_registered(user.id):
+        await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
+        return
     await message.reply(
         "🚩 Байршлаа илгээнэ үү!\n\n"
         "❗️ Зөвхөн \"Live Location\" (хөдөлгөөнт байршил) илгээнэ.\n\n"
@@ -142,6 +154,10 @@ async def checkout_handler(message: types.Message):
 # Байршил хүлээж авах үед ажлын зураг асууна.
 @dp.message_handler(content_types=['location'], state=CheckoutStates.waiting_for_location)
 async def process_checkout_location(message: types.Message, state: FSMContext):
+    user = message.from_user
+    if not is_telegram_id_registered(user.id):
+        await message.reply("Та эхлээд /register коммандыг ашиглан бүртгүүлнэ үү.")
+        return
     loc = message.location
     offices = get_offices_from_sheet(SHEET_URL_LOCATION, CREDS_FILE, WORKSHEET_NAME)
     is_inside, office_name, distance = find_nearest_office(loc.latitude, loc.longitude, offices)
