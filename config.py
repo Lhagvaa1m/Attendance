@@ -17,4 +17,5 @@ SHEET_URL_ATTENDANCE = os.environ.get("SHEET_URL_ATTENDANCE")
 SHEET_URL_LOCATION = os.environ.get("SHEET_URL_LOCATION")
 WORKSHEET_NAME = os.environ.get("WORKSHEET_NAME", "offices")
 
-print("API_TOKEN:", repr(API_TOKEN))
+# Commented out to avoid leaking the bot token during execution
+# print("API_TOKEN:", repr(API_TOKEN))
