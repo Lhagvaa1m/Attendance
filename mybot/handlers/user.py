@@ -93,7 +93,7 @@ async def checkin_handler(message: types.Message):
     )
 
   # Байршил хүлээж авах үед checkin хийх
-@dp.message_handler(content_types=['location'])
+@dp.message_handler(content_types=['location'], state=None)
 async def location_handler(message: types.Message):
     loc = message.location
     # Заавал live_location шалгана
