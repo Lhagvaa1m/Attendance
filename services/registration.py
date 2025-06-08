@@ -7,7 +7,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def is_telegram_id_registered(telegram_user_id):
+def is_telegram_id_registered(telegram_user_id: int | str) -> bool:
     # Telegram ID өмнө нь бүртгэгдсэн эсэхийг шалгах
     sheet_emp = get_sheet(SHEET_URL_EMPLOYEES)
     emp_users = sheet_emp.col_values(4)[1:]
@@ -19,7 +19,7 @@ def is_telegram_id_registered(telegram_user_id):
     return str(telegram_user_id) in att_users
 
 # Employees sheet-ээс Telegram ID-гаар регистрийн дугаар авах
-def get_register_number_by_telegram_id(telegram_id):
+def get_register_number_by_telegram_id(telegram_id: int | str) -> str:
     sheet = get_sheet(SHEET_URL_EMPLOYEES)
     rows = sheet.get_all_values()
     for row in rows[1:]:  # гарчигыг алгасана
@@ -28,7 +28,7 @@ def get_register_number_by_telegram_id(telegram_id):
     return ""
 
 
-def list_registered_telegram_ids():
+def list_registered_telegram_ids() -> list[int]:
     """Return a list of Telegram user IDs registered in the employees sheet."""
     sheet = get_sheet(SHEET_URL_EMPLOYEES)
     records = sheet.get_all_records()
