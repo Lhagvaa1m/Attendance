@@ -3,6 +3,8 @@
 import os
 from aiogram import Dispatcher, types
 import logging
+from config import SHEET_URL_LOCATION, CREDS_FILE, WORKSHEET_NAME
+from sheets.base import get_offices_from_sheet
 try:  # pragma: no cover - fallback for test stubs
     from aiogram.types import ReplyKeyboardRemove
 except Exception:  # pragma: no cover - fallback for tests without this class
@@ -74,10 +76,31 @@ def register_admin_handlers(dp: Dispatcher) -> None:
     async def offices(message: types.Message) -> None:
         if not is_admin(message.from_user.id):
             return
-        # TODO: display office locations
-        await message.answer(
-            "Office list not implemented yet.", reply_markup=ReplyKeyboardRemove()
-        )
+        try:
+            offices = get_offices_from_sheet(
+                SHEET_URL_LOCATION, CREDS_FILE, WORKSHEET_NAME
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Failed to load offices: %s", exc)
+            await message.answer(
+                "Could not load offices.", reply_markup=ReplyKeyboardRemove()
+            )
+            return
+
+        if not offices:
+            await message.answer(
+                "No offices configured.", reply_markup=ReplyKeyboardRemove()
+            )
+            return
+
+        lines = ["Offices:"]
+        for office in offices:
+            name = office.get("name", "?")
+            lat = office.get("lat")
+            lon = office.get("lon")
+            lines.append(f"- {name} ({lat}, {lon})")
+
+        await message.answer("\n".join(lines), reply_markup=ReplyKeyboardRemove())
 
     @dp.message_handler(commands=["add_office"])
     async def add_office(message: types.Message) -> None:
