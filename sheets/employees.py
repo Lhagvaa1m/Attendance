@@ -2,6 +2,7 @@
 # Employees sheet-тэй холбоотой бүх функцүүд (хайлт, бүртгэл)
 from sheets.base import get_sheet
 from config import SHEET_URL_EMPLOYEES
+from utils.gsheet_cache import get_all_records
 import logging
 
 logger = logging.getLogger(__name__)
@@ -33,3 +34,9 @@ def register_employee_telegram_id(register_number, telegram_user_id):
         )
         return True
     return False
+
+
+def get_all_employees():
+    """Return all employee records from the employees sheet."""
+    sheet = get_sheet(SHEET_URL_EMPLOYEES)
+    return get_all_records(sheet)

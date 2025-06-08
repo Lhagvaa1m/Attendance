@@ -5,6 +5,7 @@ from aiogram import Dispatcher, types
 import logging
 from config import SHEET_URL_LOCATION, CREDS_FILE, WORKSHEET_NAME
 from sheets.base import get_offices_from_sheet
+from sheets.employees import get_all_employees
 try:  # pragma: no cover - fallback for test stubs
     from aiogram.types import ReplyKeyboardRemove
 except Exception:  # pragma: no cover - fallback for tests without this class
@@ -67,10 +68,35 @@ def register_admin_handlers(dp: Dispatcher) -> None:
     async def users(message: types.Message) -> None:
         if not is_admin(message.from_user.id):
             return
-        # TODO: fetch actual user list
-        await message.answer(
-            "User listing not implemented yet.", reply_markup=ReplyKeyboardRemove()
-        )
+        try:
+            employees = get_all_employees()
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Failed to load users: %s", exc)
+            await message.answer(
+                "Could not load user list.", reply_markup=ReplyKeyboardRemove()
+            )
+            return
+
+        if not employees:
+            await message.answer(
+                "No registered users.", reply_markup=ReplyKeyboardRemove()
+            )
+            return
+
+        lines = ["Registered users:"]
+        for row in employees:
+            last = row.get("last_name", "")
+            first = row.get("first_name", "")
+            reg = row.get("register_number")
+            tid = row.get("telegram_user_id")
+            info = f"{last} {first}".strip()
+            if reg:
+                info += f" ({reg})"
+            if tid:
+                info += f" – {tid}"
+            lines.append(f"- {info}")
+
+        await message.answer("\n".join(lines), reply_markup=ReplyKeyboardRemove())
 
     @dp.message_handler(commands=["offices"])
     async def offices(message: types.Message) -> None:
