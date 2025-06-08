@@ -1,9 +1,10 @@
-from aiogram import types
-from aiogram.dispatcher.filters import Command
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from aiogram.dispatcher import FSMContext
-from mybot import dp
 import logging
+
+from aiogram import types
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Command
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from mybot import dp
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +29,6 @@ async def send_menu(message: types.Message, state: FSMContext):
     )
 
 # ==== /help ====
-
-from aiogram import types
-from mybot import dp  # Таны dispatcher импортолсон байх ёстой
 
 @dp.message_handler(commands=['help'])
 async def send_help(message: types.Message):
